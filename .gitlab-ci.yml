@@ -1,0 +1,16 @@
+stages:
+  - test
+
+run_playwright_tests:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.40.0-focal  # Официальный образ Playwright
+  script:
+    - npm ci            # Устанавливаем зависимости (если есть package.json)
+    # или для Python: pip install -r requirements.txt
+    - npx playwright test  # Запускаем тесты
+  artifacts:
+    when: always        # Сохранять артефакты даже при падении тестов
+    paths:
+      - test-results/   # Папка с результатами тестов (скриншоты, видео)
+      - playwright-report/  # Папка с отчетом
+    expire_in: 1 week   # Хранить артефакты неделю
