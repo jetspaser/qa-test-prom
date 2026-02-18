@@ -1,23 +1,45 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
+*$py.class
 *.pyd
+*.so
+.Python
 
 # Virtual environment
 .venv/
 venv/
+ENV/
+env/
 
-# Pytest
+# Pytest & Reports
 .pytest_cache/
+.cache/
+# Если будешь использовать Allure в будущем
+allure-results/
+allure-report/
 
 # Playwright
 playwright-report/
 test-results/
+# Скриншоты и видео тестов (обычно хранятся в test-results, но на всякий случай)
+*.png
+*.mp4
 
-# IDE
+# IDE (JetBrains и VS Code)
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# Env
+# OS (Системные файлы)
+.DS_Store
+Thumbs.db
+
+# Config & Secrets
 .env
+.env.*
+! .env.example # Оставляем пример конфига для других разработчиков
+
+# Logs
+*.log

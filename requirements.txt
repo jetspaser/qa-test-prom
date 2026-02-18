@@ -1,2 +1,4 @@
-pytest
-playwright
+pytest==7.4.3
+pytest-playwright==0.4.3
+pytest-base-url==2.0.0
+pytest-xdist==3.3.1

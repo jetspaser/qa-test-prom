@@ -3,14 +3,31 @@ stages:
 
 run_playwright_tests:
   stage: test
-  image: mcr.microsoft.com/playwright:v1.40.0-focal  # Официальный образ Playwright
+  # Используем официальный образ Playwright с предустановленным Python
+  image: mcr.microsoft.com/playwright/python:v1.40.0-jammy
+
+  variables:
+    # Отключаем создание .pyc файлов, чтобы не мусорить в контейнере
+    PYTHONDONTWRITEBYTECODE: 1
+    # Включаем логирование в реальном времени
+    PYTHONUNBUFFERED: 1
+
+  before_script:
+    - python -V
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    # Устанавливаем браузеры (если они не зашиты в образ или нужны другие)
+    - playwright install chromium --with-deps
+
   script:
-    - npm ci            # Устанавливаем зависимости (если есть package.json)
-    # или для Python: pip install -r requirements.txt
-    - npx playwright test  # Запускаем тесты
+    # Запускаем pytest. Флаг --base-url можно передать здесь, если он не в pytest.ini
+    - pytest --junitxml=report.xml
+
   artifacts:
-    when: always        # Сохранять артефакты даже при падении тестов
+    when: always
     paths:
-      - test-results/   # Папка с результатами тестов (скриншоты, видео)
-      - playwright-report/  # Папка с отчетом
-    expire_in: 1 week   # Хранить артефакты неделю
+      - test-results/       # Скриншоты и видео при падениях
+      - report.xml          # JUnit отчет для интеграции с GitLab
+    reports:
+      junit: report.xml     # GitLab покажет результаты тестов прямо в Merge Request
+    expire_in: 1 week
