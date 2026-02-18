@@ -20,70 +20,41 @@ class Header(BasePage):
         """
         super().__init__(page)
 
-        # Поле ввода поиска (ID стабилен)
+        # 1. Поле ввода поиска (ID стабилен)
         self.search_input: Locator = page.locator("#title-search-input")
 
-        # РЕШЕНИЕ: Уточняем, что нам нужен каталог именно внутри тега <header>
-        # и берем первый подходящий (обычно это десктопная версия)
+        # 2. Кнопка "Лупа" 
+        # ИСПРАВЛЕНИЕ: Уточняем путь. Берем кнопку поиска именно внутри блока #title-search,
+        # чтобы избежать конфликта с мобильной и фиксированной версиями.
+        self.search_button: Locator = page.locator("#title-search button[name='s']")
+
+        # 3. Кнопка "Каталог" 
         self.catalog_button: Locator = page.locator("header").get_by_text("Каталог", exact=True).first
 
-        # Ссылка на Telegram в верхней части
+        # 4. Ссылка на Telegram
         self.telegram_icon: Locator = page.locator("header a[href*='t.me']")
 
-        # Кнопка "Заказать звонок"
+        # 5. Кнопка "Заказать звонок"
         self.callback_button: Locator = page.locator("header").get_by_text("Заказать звонок")
 
-    def search(self, text: str) -> None:
+    def search(self, text: str, use_mouse: bool = False) -> None:
         """
-        Выполняет поиск товара через ввод текста и нажатие клавиши Enter.
+        Выполняет поиск товара.
         :param text: Текст поискового запроса.
+        :param use_mouse: Если True — кликаем по лупе. Если False — жмем Enter.
         """
         self.search_input.fill(text)
-        self.search_input.press("Enter")
+
+        if use_mouse:
+            # Перед кликом убедимся, что кнопка готова
+            self.search_button.wait_for(state="visible")
+            self.search_button.click()
+        else:
+            self.search_input.press("Enter")
 
     def open_catalog(self) -> None:
         """
         Нажимает на кнопку каталога для открытия выпадающего меню.
         """
+        self.catalog_button.wait_for(state="visible")
         self.catalog_button.click()
-
-
-
-
-    # def __init__(self, page: Page):
-    #     """
-    #     Инициализация локаторов шапки.
-    #     """
-    #     super().__init__(page)
-    #     # Поле ввода поиска (ID уникален для главной страницы)
-    #     self.search_input = page.locator("#title-search-input")
-    #     # Локатор для блока с описанием сопровождения
-    #     self.support_text = page.locator("text=Полное сопровождение — от закупки оборудования")
-    #     # Кнопка Asic майнеры (ищем по тексту)
-    #     self.asic_miners_btn = page.locator("a", has_text="Asic майнеры").first
-    #
-    #     # ЛОКАТОР КНОПКИ (закомментирован как доп. вариант)
-    #     # На сайте promminer.ru кнопка поиска обычно имеет атрибут name='s' или класс 'search-btn'
-    #     # self.search_button = page.locator("button[name='s']")
-
-
-    # def search(self, text: str):
-    #     """
-    #     Выполняет поиск товара.
-    #
-    #     :param text: Текст поискового запроса.
-    #     """
-    #     # 1. Заполняем поле текстом
-    #     self.search_input.fill(text)
-    #
-    #     # 2. ОСНОВНОЙ ВАРИАНТ: Нажимаем Enter (универсально для десктопа и адаптива)
-    #     self.search_input.press("Enter")
-    #
-    #     # ---------------------------------------------------------
-    #     # ДОПОЛНИТЕЛЬНЫЙ ВАРИАНТ (через клик по лупе):
-    #     # Чтобы использовать его, закомментируй строку выше и раскомментируй это:
-    #     # if self.search_button.is_visible():
-    #     #     self.search_button.click()
-    #     # else:
-    #     #     self.search_input.press("Enter")
-    #     # ---------------------------------------------------------

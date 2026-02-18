@@ -20,4 +20,4 @@ playwright install
 
 
 Пример «боевой» команды для дебага:
-pytest qa-test-prom/test_main_page.py --headed --slowmo 500 -v
+pytest pytest tests/test_main_page.py --headed --slowmo 500 -v

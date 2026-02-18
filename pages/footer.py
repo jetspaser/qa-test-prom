@@ -1,5 +1,3 @@
-
-
 """
 Модуль с описанием компонента футера (подвала) сайта.
 """
@@ -14,17 +12,19 @@ class Footer(BasePage):
     def __init__(self, page: Page):
         """
         Инициализация локаторов футера.
+        :param page: Объект страницы Playwright.
         """
         super().__init__(page)
-        # Ссылка на Telegram в футере (используем селектор по атрибуту href)
-        self.tg_link: Locator = page.locator("footer a[href*='t.me/promminer']")
-        # Ссылка на политику конфиденциальности
-        self.privacy_policy_link: Locator = page.locator("footer a", has_text="Политика конфиденциальности")
-        # Текст с копирайтом или адресом
-        self.address_info: Locator = page.locator("footer .contact-block")
 
-    def click_telegram(self):
+        # 1. Ссылка на Telegram (используем класс social__link внутри li.telegram)
+        self.tg_social_link: Locator = page.locator("li.telegram a.social__link")
+
+        # 2. Текст "Сервис" (ищем ссылку с классом dark_link внутри блока title)
+        self.service_link_text: Locator = page.locator(".title a.dark_link", has_text="Сервис")
+
+    def click_telegram_social(self) -> None:
         """
-        Переходит по ссылке в Telegram.
+        Выполняет клик по иконке Telegram в блоке соцсетей.
         """
-        self.tg_link.click()
+        self.tg_social_link.scroll_into_view_if_needed()
+        self.tg_social_link.click()
