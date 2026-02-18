@@ -1,81 +1,68 @@
 
 
 """
-BasePage.
-
-Базовый класс для всех Page Object.
-Содержит общие методы взаимодействия со страницей,
-такие как клик, ввод текста и ожидания элементов.
+Базовый класс для всех страниц.
 """
 
-from playwright.sync_api import Page, Locator
-
+from playwright.sync_api import Page
 
 class BasePage:
-    """
-    Базовый Page Object.
-
-    Содержит общие методы для работы со страницей:
-    переходы, клики, ввод данных и ожидания элементов.
-    """
-
-    def __init__(self, page: Page) -> None:
-        """
-        Инициализация базовой страницы.
-
-        :param page: Экземпляр страницы Playwright
-        """
+    def __init__(self, page: Page):
         self.page = page
 
-    def open(self, url: str) -> None:
+    def open(self, url: str):
         """
-        Открыть страницу по указанному URL.
-
-        :param url: URL страницы
+        Открывает страницу (базовый URL берется из конфига или передается целиком).
         """
         self.page.goto(url)
 
-    def click(self, locator: Locator) -> None:
-        """
-        Выполнить клик по элементу.
 
-        :param locator: Локатор элемента
-        """
-        locator.click()
 
-    def fill(self, locator: Locator, text: str) -> None:
-        """
-        Ввести текст в поле ввода.
-
-        :param locator: Локатор поля ввода
-        :param text: Текст для ввода
-        """
-        locator.fill(text)
-
-    def get_text(self, locator: Locator) -> str:
-        """
-        Получить текст элемента.
-
-        :param locator: Локатор элемента
-        :return: Текст элемента
-        """
-        return locator.text_content()
-
-    def is_visible(self, locator: Locator) -> bool:
-        """
-        Проверить, отображается ли элемент на странице.
-
-        :param locator: Локатор элемента
-        :return: True, если элемент видим
-        """
-        return locator.is_visible()
-
-    def wait_for_visible(self, locator: Locator, timeout: int = 5000) -> None:
-        """
-        Ожидать появления элемента на странице.
-
-        :param locator: Локатор элемента
-        :param timeout: Таймаут ожидания в миллисекундах
-        """
-        locator.wait_for(state="visible", timeout=timeout)
-
+# На перспективу код (разбор playwright)
+#
+# """
+# Модуль содержит базовый класс для всех Page Objects.
+# Здесь описываются общие методы, не привязанные к конкретным элементам.
+# """
+#
+# from playwright.sync_api import Page, Response, expect
+# from typing import Optional
+#
+#
+# class BasePage:
+#     """
+#     Базовый класс страницы.
+#
+#     Почему мы не оборачиваем click() и fill():
+#     Playwright реализует Auto-waiting "из коробки". Создание методов-оберток
+#     скрывает нативную трассировку ошибок и избыточно для этого фреймворка.
+#     """
+#
+#     def __init__(self, page: Page):
+#         """
+#         Инициализация базового класса.
+#         :param page: Объект страницы Playwright.
+#         """
+#         self.page = page
+#
+#     def open(self, url: str) -> Optional[Response]:
+#         """
+#         По умолчанию Playwright ждет события load
+#         (когда загрузится всё, включая тяжелые скрипты аналитики и картинки)
+#         """
+#         return self.page.goto(url, wait_until="domcontentloaded")
+#
+#     def verify_url(self, expected_url_part: str):
+#         """
+#         Проверяет, что текущий URL содержит ожидаемую подстроку.
+#         Используем Web-First assertion для автоматического ожидания.
+#         """
+#         expect(self.page).to_have_url(expected_url_part)
+#
+#     def get_page_title(self) -> str:
+#         """Возвращает заголовок вкладки браузера."""
+#         return self.page.title()
+#
+#     def reload(self):
+#         """Перезагружает текущую страницу."""
+#         self.page.reload(wait_until="domcontentloaded")
