@@ -38,6 +38,12 @@ cd qa-test-prom
 
 Установка зависимостей:
 
+# Установка pytest-playwright через py
+py -m pip install pytest-playwright
+
+# После установки, установка браузеров Playwright
+py -m playwright install
+
 pip install pytest-playwright
 
 playwright install
